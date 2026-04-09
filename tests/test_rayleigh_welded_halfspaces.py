@@ -41,7 +41,7 @@ def test_reflected_mode_has_negative_integrated_poynting_flux():
     omega, z, _, _ = _default_setup()
 
     reflected = rayleigh_mode(medium["alpha"], medium["beta"], medium["rho"], omega, z, phase_sign=-1)
-    flux_ref = np.trapz(
+    flux_ref = np.trapezoid(
         poynting_x(reflected["sigma_xx"], reflected["sigma_xz"], reflected["vx"], reflected["vz"]),
         z,
     )
