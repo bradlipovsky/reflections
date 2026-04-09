@@ -35,6 +35,13 @@ import matplotlib.pyplot as plt
 # ============================================================
 
 
+def integrate_trapezoid(y, x):
+    """Version-tolerant trapezoidal integration helper."""
+    if hasattr(np, "trapezoid"):
+        return np.trapezoid(y, x)
+    return np.trapz(y, x)
+
+
 def rayleigh_speed(alpha, beta):
     """Return Rayleigh speed c_R for a homogeneous isotropic half-space."""
     kappa = beta / alpha
@@ -421,9 +428,15 @@ def main():
     mode_L_ref = sol["mode_L_ref"]
     mode_R_tra = sol["mode_R_tra"]
 
-    flux_inc = np.trapz(poynting_x(mode_L_inc["sigma_xx"], mode_L_inc["sigma_xz"], mode_L_inc["vx"], mode_L_inc["vz"]), z)
-    flux_ref_mag = np.trapz(poynting_x(mode_L_ref["sigma_xx"], mode_L_ref["sigma_xz"], mode_L_ref["vx"], mode_L_ref["vz"]), z)
-    flux_tra = np.trapz(poynting_x(mode_R_tra["sigma_xx"], mode_R_tra["sigma_xz"], mode_R_tra["vx"], mode_R_tra["vz"]), z)
+    flux_inc = integrate_trapezoid(
+        poynting_x(mode_L_inc["sigma_xx"], mode_L_inc["sigma_xz"], mode_L_inc["vx"], mode_L_inc["vz"]), z
+    )
+    flux_ref_mag = integrate_trapezoid(
+        poynting_x(mode_L_ref["sigma_xx"], mode_L_ref["sigma_xz"], mode_L_ref["vx"], mode_L_ref["vz"]), z
+    )
+    flux_tra = integrate_trapezoid(
+        poynting_x(mode_R_tra["sigma_xx"], mode_R_tra["sigma_xz"], mode_R_tra["vx"], mode_R_tra["vz"]), z
+    )
 
     Pi_I = np.real(flux_inc)
     Pi_R_mode = -np.real(flux_ref_mag)
