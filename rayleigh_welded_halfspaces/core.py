@@ -60,7 +60,7 @@ def rayleigh_mode(alpha, beta, rho, omega, z, phase_sign=+1, amplitude=1.0 + 0j)
     div_u = (p ** 2 - k ** 2) * phi
     sigma_xx = lam * div_u + 2.0 * mu * (1j * s * k * ux)
     sigma_xz = mu * (phi_x.conjugate() * 0.0 + (2j * s * k * phi_z - (k ** 2 + q ** 2) * psi))
-    sigma_zz = lam * div_u + 2.0 * mu * phi_z * (-p) + 2.0 * mu * psi_x * (1j * s * k)
+    sigma_zz = lam * div_u + 2.0 * mu * (p ** 2 * phi - 1j * s * k * q * psi)
 
     return {
         "alpha": alpha,
@@ -346,9 +346,18 @@ def run_demo(show=True, output_prefix="mm_"):
     mode_L_ref = sol["mode_L_ref"]
     mode_R_tra = sol["mode_R_tra"]
 
-    flux_inc = np.trapz(poynting_x(mode_L_inc["sigma_xx"], mode_L_inc["sigma_xz"], mode_L_inc["vx"], mode_L_inc["vz"]), z)
-    flux_ref_mag = np.trapz(poynting_x(mode_L_ref["sigma_xx"], mode_L_ref["sigma_xz"], mode_L_ref["vx"], mode_L_ref["vz"]), z)
-    flux_tra = np.trapz(poynting_x(mode_R_tra["sigma_xx"], mode_R_tra["sigma_xz"], mode_R_tra["vx"], mode_R_tra["vz"]), z)
+    flux_inc = np.trapezoid(
+        poynting_x(mode_L_inc["sigma_xx"], mode_L_inc["sigma_xz"], mode_L_inc["vx"], mode_L_inc["vz"]),
+        z,
+    )
+    flux_ref_mag = np.trapezoid(
+        poynting_x(mode_L_ref["sigma_xx"], mode_L_ref["sigma_xz"], mode_L_ref["vx"], mode_L_ref["vz"]),
+        z,
+    )
+    flux_tra = np.trapezoid(
+        poynting_x(mode_R_tra["sigma_xx"], mode_R_tra["sigma_xz"], mode_R_tra["vx"], mode_R_tra["vz"]),
+        z,
+    )
 
     Pi_I = np.real(flux_inc)
     Pi_R_mode = -np.real(flux_ref_mag)
