@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rayleigh-welded-halfspaces"
+version = "0.1.0"
+description = "Semi-analytical Rayleigh reflection at welded elastic half-space interfaces"
+requires-python = ">=3.9"
+dependencies = [
+  "numpy",
+  "matplotlib",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["rayleigh_welded_halfspaces*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
